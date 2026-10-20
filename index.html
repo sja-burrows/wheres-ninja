@@ -104,7 +104,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
   min-width:0;
 }
 
-.translation{min-height:28px;margin-top:5px;font-size:17px;font-weight:800;color:#333}
+.question-toggle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:#ffe4e4;border:2px solid #c62828;border-radius:8px;padding:5px;min-height:60px;width:100%;cursor:pointer;opacity:1;color:#8b1111}.question-toggle[aria-pressed="true"]{background:#ef5350;border-color:#a91515;color:#fff;box-shadow:0 0 0 3px #ffcdd2}.question-toggle .fixed-romaji{display:block;font-size:14px}.question-toggle .fixed-jp{display:block;font-size:24px}.question-piece{min-width:0;background:#f7aaaa !important;border-color:#c62828 !important}.translation{min-height:28px;margin-top:5px;font-size:17px;font-weight:800;color:#333}
 .translation:empty{display:none}
 
 
@@ -121,10 +121,10 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
   gap:5px !important;
 }
 .builder-panel .level[data-level="room"] .row{
-  grid-template-columns:minmax(90px,1.35fr) minmax(42px,.55fr) minmax(90px,1.35fr) minmax(42px,.55fr) minmax(80px,1.1fr);
+  grid-template-columns:minmax(90px,1.35fr) minmax(42px,.55fr) minmax(90px,1.35fr) minmax(42px,.55fr) minmax(80px,1.1fr) minmax(45px,.55fr);
 }
 .builder-panel .level[data-level="prep"] .row{
-  grid-template-columns:minmax(78px,1.15fr) minmax(38px,.42fr) minmax(95px,1.45fr) minmax(38px,.42fr) minmax(85px,1.2fr) minmax(38px,.42fr) minmax(75px,1fr);
+  grid-template-columns:minmax(78px,1.15fr) minmax(38px,.42fr) minmax(95px,1.45fr) minmax(38px,.42fr) minmax(85px,1.2fr) minmax(38px,.42fr) minmax(75px,1fr) minmax(45px,.55fr);
 }
 .builder-panel .piece{
   min-width:0 !important;
@@ -207,8 +207,6 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
   overflow-x:hidden !important;
   padding-bottom:18px !important;
   scrollbar-width:none;
-  overscroll-behavior-y:contain;
-  touch-action:none;
 }
 .vocab-panel::-webkit-scrollbar{display:none}
 .vocab-rail{position:absolute;left:2px;top:0;bottom:0;width:13px;border-radius:9px;background:#e2e7ef;cursor:pointer;touch-action:none}
@@ -220,7 +218,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 </head>
 <body><main>
 <div class="header"><div class="ninja">🥷</div><div><h1>にんじゃはどこですか。</h1><div class="sub">Where's Ninja?</div></div></div>
-<p class="instructions">Drag a puzzle piece into each blank. On an iPad, you can also tap a piece and then tap the matching blank.</p>
+<p class="instructions">Drag a puzzle piece into each blank. On an iPad, you can also tap a piece and then tap the matching blank. Tap the か to turn the sentence into a question.</p>
 
 <div class="workspace">
 <div class="vocab-wrap"><div class="vocab-rail" role="scrollbar" aria-label="Scroll word tiles up or down" aria-controls="vocab-panel" aria-orientation="vertical" tabindex="0"><div class="vocab-thumb"></div></div><aside class="vocab-panel" id="vocab-panel">
@@ -241,6 +239,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 <div class="piece room" style="min-width:145px"><div class="label">ROOM</div><div class="slot" data-kind="room"></div></div>
 <div class="piece room" style="min-width:92px"><div class="fixed-romaji">ni</div><div class="fixed-jp">に</div></div>
 <div class="piece blue" style="min-width:130px"><div class="label">VERB</div><div class="slot" data-kind="verb"></div></div>
+ <div class="piece cream question-piece" style="min-width:55px"><div class="label">QUESTION?</div><button type="button" class="question-toggle" aria-pressed="false"><span class="fixed-romaji">ka</span><span class="fixed-jp">か</span></button></div>
 </div></div><div class="output"></div><div class="feedback">Build your sentence.</div><div class="translation" aria-live="polite"></div>
 <div class="controls"><button class="action check">✓ Check sentence</button><button class="action clear">Clear</button></div>
 </section>
@@ -255,6 +254,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 <div class="piece purple" style="min-width:140px"><div class="label">PREPOSITION</div><div class="slot" data-kind="preposition"></div></div>
 <div class="piece purple" style="min-width:92px"><div class="fixed-romaji">ni</div><div class="fixed-jp">に</div></div>
 <div class="piece blue" style="min-width:130px"><div class="label">VERB</div><div class="slot" data-kind="verb"></div></div>
+ <div class="piece cream question-piece" style="min-width:55px"><div class="label">QUESTION?</div><button type="button" class="question-toggle" aria-pressed="false"><span class="fixed-romaji">ka</span><span class="fixed-jp">か</span></button></div>
 </div></div><div class="output"></div><div class="feedback">Build your sentence.</div><div class="translation" aria-live="polite"></div>
 <div class="controls"><button class="action check">✓ Check sentence</button><button class="action clear">Clear</button></div>
 </section>
@@ -265,7 +265,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 </main>
 <script>
 const subjects=[['りんご','ringo','🍎','no','apple'],['いぬ','inu','🐕','yes','dog'],['ベッド','beddo','🛏️','no','bed'],['にんじゃ','ninja','🥷','yes','ninja'],['とり','tori','🐦','yes','bird'],['ソファ','sofa','🛋️','no','sofa'],['はこ','hako','📦','no','box'],['テーブル','teeburu','▰','no','table'],['ねこ','neko','🐈','yes','cat'],['トイレ','toire','🚽','no','toilet'],['とけい','tokei','🕐','no','clock'],['テレビ','terebi','📺','no','TV']];
-const rooms=[['うち','uchi','🏠','home'],['おふろば','ofuroba','🛁','bathroom'],['げんかん','genkan','🚪','entrance'],['トイレ','toire','🚽'],['リビングルーム','ribinguruumu','🛋️','living room'],['しんしつ','shinshitsu','🛏️','bedroom'],['わしつ','washitsu','🏠','Japanese-style room'],['にわ','niwa','🌳','garden'],['だいどころ','daidokoro','🍳','kitchen']];
+const rooms=[['うち','uchi','🏠','home'],['おふろば','ofuroba','🛁','bathroom'],['げんかん','genkan','🚪','entrance'],['トイレ','toire','🚽','toilet'],['リビングルーム','ribinguruumu','🛋️','living room'],['しんしつ','shinshitsu','🛏️','bedroom'],['わしつ','washitsu','🏠','Japanese-style room'],['にわ','niwa','🌳','garden'],['だいどころ','daidokoro','🍳','kitchen']];
 const refs=[['りんご','ringo','🍎'],['ベッド','beddo','🛏️'],['ソファ','sofa','🛋️'],['はこ','hako','📦'],['テーブル','teeburu','▰'],['とけい','tokei','🕐'],['テレビ','terebi','📺']];
 const preps=[['上','ue','⬆️','on top of'],['下','shita','⬇️','under'],['中','naka','📦','inside'],['まえ','mae','➡️','in front of'],['うしろ','ushiro','⬅️','behind'],['となり','tonari','↔️','next to']];
 const verbs=[['います','imasu','🥷','living'],['あります','arimasu','📦','object']];
@@ -291,18 +291,22 @@ document.querySelectorAll('.slot').forEach(s=>s.addEventListener('click',e=>{if(
 
 function attachPointer(t){
  let start=null;
- t.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')return;start={x:e.clientX,y:e.clientY,id:e.pointerId,moved:false};dragging=t;t.setPointerCapture?.(e.pointerId)});
+ t.addEventListener('pointerdown',e=>{start={x:e.clientX,y:e.clientY,id:e.pointerId,moved:false};dragging=t;t.setPointerCapture?.(e.pointerId)});
  t.addEventListener('pointermove',e=>{if(!start||e.pointerId!==start.id)return;if(Math.hypot(e.clientX-start.x,e.clientY-start.y)>8){start.moved=true;if(!ghost){ghost=t.cloneNode(true);ghost.classList.add('dragghost');document.body.appendChild(ghost)}ghost.style.left=(e.clientX-50)+'px';ghost.style.top=(e.clientY-35)+'px'}});
  t.addEventListener('pointerup',e=>{if(!start||e.pointerId!==start.id)return;if(start.moved){if(ghost){ghost.remove();ghost=null}let el=document.elementFromPoint(e.clientX,e.clientY),s=el?.closest('.slot');if(s)place(t,s)}start=null;dragging=null});
  t.addEventListener('pointercancel',()=>{if(ghost){ghost.remove();ghost=null}start=null;dragging=null});
 }
 function get(l,k){return l.querySelector('.slot[data-kind="'+k+'"] .tile')}
+function isQuestion(l){return l.querySelector('.question-toggle').getAttribute('aria-pressed')==='true'}
 function update(l){let s=get(l,'subject'),v=get(l,'verb'),out=l.querySelector('.output'),f=l.querySelector('.feedback'),tr=l.querySelector('.translation'),ok=false;tr.textContent='';
- if(l.dataset.level==='room'){let r=get(l,'room');ok=s&&r&&v;out.textContent=ok?s.dataset.jp+' は '+r.dataset.jp+' に '+v.dataset.jp+'。':''}
- else{let r=get(l,'reference'),p=get(l,'preposition');ok=s&&r&&p&&v;out.textContent=ok?s.dataset.jp+' は '+r.dataset.jp+' の '+p.dataset.jp+' に '+v.dataset.jp+'。':''}
- if(!ok){f.textContent='Build your sentence.';f.className='feedback'}}
+ const ending=isQuestion(l)?' か。':'。';
+ if(l.dataset.level==='room'){let r=get(l,'room');ok=s&&r&&v;out.textContent=ok?s.dataset.jp+' は '+r.dataset.jp+' に '+v.dataset.jp+ending:''}
+ else{let r=get(l,'reference'),p=get(l,'preposition');ok=s&&r&&p&&v;out.textContent=ok?s.dataset.jp+' は '+r.dataset.jp+' の '+p.dataset.jp+' に '+v.dataset.jp+ending:''}
+ if(!ok){f.textContent='Build your sentence.';f.className='feedback'}else{f.textContent='Ready to check!';f.className='feedback'}
+}
 function updateAll(){document.querySelectorAll('.level').forEach(update)}
 document.querySelectorAll('.level').forEach(l=>{
+ l.querySelector('.question-toggle').addEventListener('click',()=>{const b=l.querySelector('.question-toggle');b.setAttribute('aria-pressed',String(!isQuestion(l)));update(l)});
  l.querySelector('.check').onclick=()=>{let s=get(l,'subject'),v=get(l,'verb'),needs=l.dataset.level==='room'?[get(l,'room')]:[get(l,'reference'),get(l,'preposition')],f=l.querySelector('.feedback');
  if(!s||!v||needs.some(x=>!x)){f.textContent='Finish the sentence first.';return}
  let right=(s.dataset.living==='yes'&&v.dataset.verb==='living')||(s.dataset.living==='no'&&v.dataset.verb==='object');
@@ -311,13 +315,13 @@ document.querySelectorAll('.level').forEach(l=>{
  if(right){
    const subject=s.dataset.en||s.dataset.jp;
    if(l.dataset.level==='room'){
-     const rm=get(l,'room');tr.textContent='English: The '+subject+' is in the '+(rm.dataset.en||rm.dataset.jp)+'.';
+     const rm=get(l,'room');tr.textContent=isQuestion(l)?'English: Is the '+subject+' in the '+(rm.dataset.en||rm.dataset.jp)+'?':'English: The '+subject+' is in the '+(rm.dataset.en||rm.dataset.jp)+'.';
    }else{
      const ref=get(l,'reference'),p=get(l,'preposition');
-     tr.textContent='English: The '+subject+' is '+(p.dataset.en||p.dataset.jp)+' the '+(ref.dataset.en||englishReference[ref.dataset.jp]||ref.dataset.jp)+'.';
+     tr.textContent='English: '+(isQuestion(l)?'Is the ':'The ')+subject+' '+(isQuestion(l)?'':'is ')+(p.dataset.en||p.dataset.jp)+' the '+(ref.dataset.en||englishReference[ref.dataset.jp]||ref.dataset.jp)+(isQuestion(l)?'?':'.');
    }
  }};
- l.querySelector('.clear').onclick=()=>{l.querySelectorAll('.slot').forEach(s=>s.innerHTML='');update(l)}
+ l.querySelector('.clear').onclick=()=>{l.querySelectorAll('.slot').forEach(s=>s.innerHTML='');l.querySelector('.question-toggle').setAttribute('aria-pressed','false');update(l)}
 });
 
 document.querySelectorAll('.vocab-panel .bank').forEach(bank=>{
@@ -352,30 +356,6 @@ document.querySelectorAll('[data-kind="reference"], .tile[data-type="reference"]
 const vocabPanel=document.getElementById('vocab-panel');
 const vocabRail=document.querySelector('.vocab-rail');
 const vocabThumb=vocabRail.querySelector('.vocab-thumb');
-let vocabTouch=null;
-vocabPanel.addEventListener('touchstart',event=>{
-  if(event.touches.length!==1){vocabTouch=null;return}
-  const touch=event.touches[0];
-  vocabTouch={x:touch.clientX,y:touch.clientY,bank:event.target.closest('.bank'),moved:false};
-},{passive:true});
-vocabPanel.addEventListener('touchmove',event=>{
-  if(!vocabTouch||event.touches.length!==1)return;
-  const touch=event.touches[0];
-  const dx=touch.clientX-vocabTouch.x,dy=touch.clientY-vocabTouch.y;
-  if(Math.abs(dx)+Math.abs(dy)>5)vocabTouch.moved=true;
-  // Handle swipes here so reaching either end never moves the whole page.
-  event.preventDefault();
-  if(vocabTouch.bank&&Math.abs(dx)>Math.abs(dy))vocabTouch.bank.scrollLeft-=dx;
-  else vocabPanel.scrollTop-=dy;
-  vocabTouch.x=touch.clientX;vocabTouch.y=touch.clientY;
-},{passive:false});
-vocabPanel.addEventListener('touchend',event=>{
-  if(vocabTouch?.moved&&event.target.closest('.tile')){
-    const tile=event.target.closest('.tile');
-    tile.addEventListener('click',e=>{e.preventDefault();e.stopPropagation()},{once:true,capture:true});
-  }
-  vocabTouch=null;
-});
 function updateVocabRail(){
   const range=vocabPanel.scrollHeight-vocabPanel.clientHeight;
   vocabRail.hidden=range<=1;
