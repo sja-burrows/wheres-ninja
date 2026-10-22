@@ -214,6 +214,21 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 .vocab-rail[hidden]{display:none}
 @media(max-width:900px){.vocab-wrap{padding-left:17px}.vocab-panel{height:min(680px,calc(100dvh - 110px))}}
 
+/* Japanese school textbook (教育体) font. Uses installed fonts on each device. */
+/* Use UD Digi Kyokasho for all Japanese writing. */
+/* Klee One SemiBold: place KleeOne-SemiBold.ttf beside index.html on GitHub Pages. */
+@font-face {
+  font-family: "Klee One Local";
+  src: url("./KleeOne-SemiBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+.jp, .fixed-jp, .output, h1 {
+  font-family: "Klee One Local", "Klee One", sans-serif !important;
+  font-weight: 600;
+}
+
 </style>
 </head>
 <body><main>
