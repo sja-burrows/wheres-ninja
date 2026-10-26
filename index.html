@@ -15,6 +15,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 .orange{background:var(--orange)}.green{background:var(--green)}.purple{background:var(--purple)}.blue{background:var(--blue)}.cream{background:var(--cream)}.room{background:var(--room)}
 .label{font-size:12px;font-weight:900;text-align:center}.fixed-romaji{font-size:15px}.fixed-jp{font-size:22px;font-weight:900}
 .slot{width:100%;min-height:60px;margin-top:8px;background:#ffffffd9;border:2px dashed #777;border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;z-index:6}
+.completed-romaji{min-height:22px;font-size:15px;font-family:Arial,sans-serif;color:#555;font-weight:600;margin-top:10px}.completed-romaji:empty{display:none}
 .output{min-height:34px;font-size:21px;font-weight:900}.feedback{min-height:25px;font-weight:800;color:var(--muted);font-size:14px}.ok{color:#176d43}
 .controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:9px}.action{min-height:44px;border-radius:11px;padding:9px 16px;font-weight:800;font-size:15px;background:white;border:1px solid #bbb}.check{background:#e8efff}
 .bank-title{display:inline-block;padding:6px 15px;border-radius:999px;font-size:14px;font-weight:900}.bank{display:flex;flex-wrap:wrap;gap:16px 19px;margin:12px 0 23px}
@@ -229,6 +230,13 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
   font-weight: 600;
 }
 
+
+/* Align each romaji reading directly above its Japanese word. */
+.output{display:flex;flex-wrap:wrap;align-items:flex-end;gap:0 9px;line-height:1.25;padding-top:8px}
+.output .reading-unit{display:inline-flex;flex-direction:column;align-items:center;white-space:nowrap}
+.output .reading-romaji{font-family:Arial,sans-serif;font-size:14px;font-weight:600;color:#555;line-height:1.3}
+.output .reading-jp{font-family:"Klee One Local","Klee One",sans-serif;font-size:21px;font-weight:600;line-height:1.5}
+.completed-romaji{display:none!important}
 </style>
 </head>
 <body><main>
@@ -255,7 +263,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 <div class="piece room" style="min-width:92px"><div class="fixed-romaji">ni</div><div class="fixed-jp">に</div></div>
 <div class="piece blue" style="min-width:130px"><div class="label">VERB</div><div class="slot" data-kind="verb"></div></div>
  <div class="piece cream question-piece" style="min-width:55px"><div class="label">QUESTION?</div><button type="button" class="question-toggle" aria-pressed="false"><span class="fixed-romaji">ka</span><span class="fixed-jp">か</span></button></div>
-</div></div><div class="output"></div><div class="feedback">Build your sentence.</div><div class="translation" aria-live="polite"></div>
+</div></div><div class="completed-romaji" aria-label="Completed sentence in romaji"></div><div class="output"></div><div class="feedback">Build your sentence.</div><div class="translation" aria-live="polite"></div>
 <div class="controls"><button class="action check">✓ Check sentence</button><button class="action clear">Clear</button></div>
 </section>
 
@@ -270,7 +278,7 @@ h1{font-size:27px;margin:0}.sub{color:var(--muted);font-weight:700;margin-top:3p
 <div class="piece purple" style="min-width:92px"><div class="fixed-romaji">ni</div><div class="fixed-jp">に</div></div>
 <div class="piece blue" style="min-width:130px"><div class="label">VERB</div><div class="slot" data-kind="verb"></div></div>
  <div class="piece cream question-piece" style="min-width:55px"><div class="label">QUESTION?</div><button type="button" class="question-toggle" aria-pressed="false"><span class="fixed-romaji">ka</span><span class="fixed-jp">か</span></button></div>
-</div></div><div class="output"></div><div class="feedback">Build your sentence.</div><div class="translation" aria-live="polite"></div>
+</div></div><div class="completed-romaji" aria-label="Completed sentence in romaji"></div><div class="output"></div><div class="feedback">Build your sentence.</div><div class="translation" aria-live="polite"></div>
 <div class="controls"><button class="action check">✓ Check sentence</button><button class="action clear">Clear</button></div>
 </section>
 
@@ -289,7 +297,7 @@ const subjectsEl=document.getElementById('subjects'),roomsEl=document.getElement
 
 function makeTile(d,kind,color){
  const b=document.createElement('button'); b.type='button'; b.className='tile '+color;
- b.dataset.kind=kind;b.dataset.jp=d[0];if(kind==='subject'){b.dataset.living=d[3];b.dataset.en=d[4]}else if(kind==='verb'){b.dataset.verb=d[3]}else{b.dataset.en=d[3]};
+ b.dataset.kind=kind;b.dataset.jp=d[0];b.dataset.romaji=d[1];if(kind==='subject'){b.dataset.living=d[3];b.dataset.en=d[4]}else if(kind==='verb'){b.dataset.verb=d[3]}else{b.dataset.en=d[3]};
  b.innerHTML='<span class="romaji">'+d[1]+'</span><span class="jp">'+d[0]+(kind==='verb'?'。':'')+'</span><span class="icon">'+d[2]+'</span>';
  b.addEventListener('click',()=>selectTile(b)); attachPointer(b); return b;
 }
@@ -314,9 +322,31 @@ function attachPointer(t){
 function get(l,k){return l.querySelector('.slot[data-kind="'+k+'"] .tile')}
 function isQuestion(l){return l.querySelector('.question-toggle').getAttribute('aria-pressed')==='true'}
 function update(l){let s=get(l,'subject'),v=get(l,'verb'),out=l.querySelector('.output'),f=l.querySelector('.feedback'),tr=l.querySelector('.translation'),ok=false;tr.textContent='';
- const ending=isQuestion(l)?' か。':'。';
- if(l.dataset.level==='room'){let r=get(l,'room');ok=s&&r&&v;out.textContent=ok?s.dataset.jp+' は '+r.dataset.jp+' に '+v.dataset.jp+ending:''}
- else{let r=get(l,'reference'),p=get(l,'preposition');ok=s&&r&&p&&v;out.textContent=ok?s.dataset.jp+' は '+r.dataset.jp+' の '+p.dataset.jp+' に '+v.dataset.jp+ending:''}
+ // Move the Japanese full stop from the verb tile to か when question mode is active.
+ const question=isQuestion(l);
+ if(v){const verbText=v.querySelector('.jp');if(verbText)verbText.textContent=v.dataset.jp+(question?'':'。')}
+ const kaText=l.querySelector('.question-toggle .fixed-jp');
+ if(kaText)kaText.textContent=question?'か。':'か';
+ // Render aligned word-by-word readings rather than one long romaji line.
+ const roman=l.querySelector('.completed-romaji');
+ roman.textContent='';
+ const r=l.dataset.level==='room'?get(l,'room'):get(l,'reference');
+ const prep=l.dataset.level==='room'?null:get(l,'preposition');
+ ok=Boolean(s&&r&&v&&(l.dataset.level==='room'||prep));
+ out.replaceChildren();
+ if(ok){
+   const words=l.dataset.level==='room'
+     ? [[s.dataset.romaji,s.dataset.jp],['wa','は'],[r.dataset.romaji,r.dataset.jp],['ni','に'],[v.dataset.romaji,v.dataset.jp]]
+     : [[s.dataset.romaji,s.dataset.jp],['wa','は'],[r.dataset.romaji,r.dataset.jp],['no','の'],[prep.dataset.romaji,prep.dataset.jp],['ni','に'],[v.dataset.romaji,v.dataset.jp]];
+   if(question)words.push(['ka','か。']);
+   else words[words.length-1][1]+='。';
+   words.forEach(([reading,japanese])=>{
+     const unit=document.createElement('span');unit.className='reading-unit';
+     const top=document.createElement('span');top.className='reading-romaji';top.textContent=reading||'';
+     const bottom=document.createElement('span');bottom.className='reading-jp';bottom.textContent=japanese;
+     unit.append(top,bottom);out.appendChild(unit);
+   });
+ }
  if(!ok){f.textContent='Build your sentence.';f.className='feedback'}else{f.textContent='Ready to check!';f.className='feedback'}
 }
 function updateAll(){document.querySelectorAll('.level').forEach(update)}
